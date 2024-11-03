@@ -1,0 +1,158 @@
+﻿@page
+@model PingaUnitBooking.UI.Pages.Auth.UserMasterModel
+@{
+    Layout = "~/Pages/Shared/_layout.cshtml";
+    ViewBag.rolePermission = (ViewBag.ActivePage == "UserMaster") ? "active" : "active";
+}
+<body class="hold-transition sidebar-mini ">
+   <div id="empLoader" class="loader-container">
+        <span class="loader"></span>
+    </div> 
+    <div class="row"  style="padding-top: 51px;">
+        <div class="col-md-12 mt-2" style="position:sticky">
+            <nav class="navbar navbar-expand-sm " style="background-color: #36454F; position: sticky; top: 160px; border-radius: 10px ;width:100%;height:45px">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" style="color:white; font-family:Tahoma">User List -</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    @* USER LIST DATATABLE*@
+
+    <section class="content mt-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex mb-2 justify-content-between" style="align-items:end">
+
+                                <div class="mr-3 w-25" style="display:inline-grid">
+                                    <span>Role</span>
+                                    <select id="roleId" class="form-control" >
+                                        <option value="Select" selected>Select</option>
+                                        <option value="Sales Manager">Sales Manager</option>
+                                        <option value="CRM">CRM</option>
+                                        <option value="Account">Account</option>
+                                        <option value="Admin/CFO">Admin/CFO</option>
+                                    </select>
+                                </div>
+                               
+                                <button id="" onclick="SaveUser()" type="button" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                              
+                            </div>
+                            <table id="userList" class="table table-bordered table-hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; "><input type="checkbox" id="selectAllCheckbox" /></th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Sr.</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">User Name</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">E-Mail</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">REMS Role</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">UBM Role</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">UBM Status</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ------------ADD Employee  MODEL----------------*@
+
+    <div class="modal fade" id="addEmpModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 30%; " role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #007BFF">
+                    <h5 id="planLabel" style="color:white;color:white">Add Employee</h5>&nbsp;&nbsp;&nbsp;
+                    <button style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-tabs">
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-one-tabContent">
+
+                                    @* ------------BASIC INFORMATION TAB----------------*@
+                                    <div class="row">
+                                        <span id="empID" hidden>0</span>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <span>Employee First Name*</span><br />
+                                                <input required class="form-control" id="empfName" style="width: 100%;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <span>Employee Last Name*</span><br />
+                                                <input required class="form-control" id="emplName" style="width: 100%;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <div class="form-group">
+                                                <span>Employee Email*</span><br />
+                                                <input required class="form-control" id="empEmail" style="width: 100%;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <div class="row mt-4 ml-auto">
+                                                    <span> is Admin</span><br />
+                                                    <input class="form-check-input" type="checkbox" value="" id="isAdmin">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <span>Password*</span><br />
+                                                <input required class="form-control" id="empPassword" style="width: 100%;" />
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <span>Confirm Password*</span><br />
+                                                <input required class="form-control" id="empConfPassword" style="width: 100%;" />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <button type="button" onclick="addEmp()" id="empBtn" data-dismiss="modal" class="btn btn-primary">Save</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    @section Scripts {
+
+
+
+      <script src="~/js/auth.js">
+        </script>
+
+        <script>userList()</script>
+
+       
+    }
+</body>

@@ -1,0 +1,123 @@
+﻿@page
+@model PingaUnitBooking.UI.Pages.ApplicationDoc.ApplicationDocModel
+@{
+    Layout = "~/Pages/Shared/_layout.cshtml";
+    ViewBag.ApplicationDoc = (ViewBag.ActivePage == "ApplicationDoc") ? "active" : "active";
+}
+<div id="empLoader" class="loader-container">
+    <span class="loader"></span>
+</div>
+<body class="hold-transition sidebar-mini ">
+    <div class="row" style="padding-top: 51px;">
+        <div class="col-md-12 mt-2 " style="position:sticky">
+            <nav class="navbar navbar-expand-sm " style="background-color: #36454F; position: sticky; top: 160px; border-radius: 10px ;width:100%;height:45px">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" style="color:white; font-family:Tahoma">Application Document List -</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto ">
+                    <li class="nav-item ">
+                        <button type="button" id="btnDocEdit" data-toggle="modal" href="" data-backdrop="static" data-keyboard="false" data-target="#addAppDocument" class="btn btn-primary" onclick="ClearData()" style="float:right ">Add Document </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    @* USER LIST DATATABLE*@
+
+    <section class="content mt-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body" id="divAppDocList">
+                            @*  Table bind here*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ------------ADD Project  MODEL----------------*@
+
+    <div class="modal fade" id="addAppDocument" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #36454F">
+                    <h5 id="planLabel" style="color:white;color:white">Add Configuration</h5>
+                    <button style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-tabs">
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-one-tabContent">
+
+                                    @* ------------BASIC INFORMATION TAB----------------*@
+                                    <div class="row">
+                                        <span id="empID" hidden>0</span>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <div class="mr-4 w-100" style="display:inline-grid">
+                                                    <span>Type<em style="color:red">*</em></span>
+                                                    <select class="form-control" id="ddlApplicationType">
+                                                        <option>Select</option>
+                                                        <option value="Individual">Individual</option>
+                                                        <option value="Firm">Firm</option>
+                                                        <option value="Company">Company</option>
+                                                        <option value="Local Authority">Local Authority</option>
+                                                        <option value="Association of Persons">Association of Persons</option>
+                                                        <option value="Body of Individuals">Body of Individuals</option>
+                                                        <option value="Artificial- Juridical">Artificial- Juridical</option>
+                                                        <option value="Persons/Entiry">Persons/Entiry</option>
+                                                        <option value="NRI">NRI</option>
+                                                        <option value="HUF">HUF</option>
+                                                        <option value="Trust">Trust</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <div class="form-group">
+                                                <div class="mr-8 w-100" style="display:inline-grid">
+                                                    <span>Document Name<em style="color:red">*</em></span>
+                                                    <input class="form-control" id="docname" style="width: 100%;" placeholder="Enter document name" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="icheck-primary ">
+                                                <input type="checkbox" id="IsRequired">
+                                                <label for="IsRequired">Is Required </label>
+                                                <hidden id="hdnDocID"></hidden>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button type="button" onclick="addAppDoc()" id="btnAddAppDoc" class="btn btn-primary">Save</button>
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @section Scripts {
+
+        <script src="~/js/ApplicationDoc.js"></script>
+    }
+</body>

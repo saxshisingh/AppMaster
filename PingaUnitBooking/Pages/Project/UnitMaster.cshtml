@@ -1,0 +1,370 @@
+﻿@page
+@model PingaUnitBooking.UI.Pages.Project.UnitMasterModel
+@{
+    Layout = "~/Pages/Shared/_layout.cshtml";
+    ViewBag.UnitDetails = (ViewBag.ActivePage == "UnitMaster") ? "active" : "active";
+}
+<div id="empLoader" class="loader-container">
+    <span class="loader"></span>
+</div>
+<body class="hold-transition sidebar-mini ">
+    <div class="row" style="padding-top: 51px;">
+        <div class="col-md-12 mt-2" style="position:sticky">
+            <nav class="navbar navbar-expand-sm " style="background-color: #36454F; position: sticky; top: 160px; border-radius: 10px ;width:100%;height:45px">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" style="color:white; font-family:Tahoma">Unit Configuration List -</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    @* USER LIST DATATABLE*@
+
+    <section class="content mt-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-3" >
+                                    <div class="form-group">
+                                        <span>Search Type</span>
+                                        <select id="searchType" onclick="searchCondition()" style="max-width:100%; max-height:40px;line-height: 29px;" class="selectpicker form-control w-100" data-live-search="true">
+                                            <option value="Select">Select</option>
+                                            <option value="Project&Tower">Project & Tower</option>
+                                            <option value="Approved">Approved</option>
+                                            <option value="Pending">Pending</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3" style="display:none"  id="projectDiv">
+                                    <div class="form-group">
+                                        <span>Select Project</span>
+                                        <select  class="form-control"  id="ddlUserProjects" onchange="GetTowerByProjectId(this.value)">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3" style="display:none" id="towerDiv">
+                                    <div class="form-group">
+                                        <span>Select Tower</span>
+                                        <select class="form-control"  id="ddlTower">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <button data-toggle="modal" data-target="#addProjectmodal" id="downloadSelected" onclick="UnitConfigureList()" type="button" class="btn btn-sm btn-primary mt-4"> Search</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <table id="unitConfigureListTable" class="table table-bordered table-hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">S. No</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Unit No.</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Tower</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Project Name</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Location</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Net Amount</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Created By</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ------------ADD UNIT  MODEL----------------*@
+
+    <div class="modal fade" id="addUnitmodal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content ">
+                <div class="modal-header" style="background-color: #36454F">
+                    <h5 id="planLabel" style="color:white;color:white">Unit Configuration</h5>&nbsp;&nbsp;&nbsp;
+                    <button style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="row" >
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-tabs">
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-one-tabContent">
+                                    <span id="unitID" hidden></span>
+                                    @* ------------BASIC INFORMATION TAB----------------*@
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Project Name </span>
+                                                    <input disabled id="projectName" class=" form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Category </span>
+                                                    <input disabled id="categoryName" class=" form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Tower </span>
+                                                    <input disabled id="towerName" class=" form-control" />
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Unit No</span>
+                                                    <input disabled id="unitNo" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Floor </span>
+                                                    <input disabled id="floorName" class=" form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="separator mb-3 mt-3">Unit Size Details</div>
+
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Area  </span>
+                                                    <input disabled id="area" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Super Area	  </span>
+                                                    <input disabled id="superArea" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Rate 	  </span>
+                                                    <input disabled id="rate" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Built Up Area	 	  </span>
+                                                    <input disabled id="builtUpArea" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Super Area Rate</span>
+                                                    <input disabled id="superAreaRate" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Terrace Area</span>
+                                                    <input disabled id="terraceArea" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Built Up Area Rate</span>
+                                                    <input disabled id="builtUpAreaRate" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>	Terrace Area Rate				 	  </span>
+                                                    <input disabled id="terraceAreaRate" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>	Carpet Area					 	  </span>
+                                                    <input disabled id="carpetArea" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>	Balcony Area  </span>
+                                                    <input disabled id="balconyArea" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+
+                                    <div class="separator mb-5 m3-3">Unit Amount Details</div>
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>	Basic Amount	  </span>
+                                                    <input disabled id="basicAmount" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Additional Amount	  </span>
+                                                    <input disabled id="additionalCharge" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Discount Amount <span class="red-star">*</span>  </span>
+                                                    <input type="text" id="discountAmount" onkeyup="netAmount()" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Net Amount		 </span>
+                                                    <input  id="netAmount" disabled class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Min. Sale Amount	<span class="red-star">*</span>	 </span>
+                                                    <input type="text" id="minSaleAmount"  pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" class="form-control" />
+                                                    <span id="minSaleAmtLabel" style="display:none;color:red;font-size:10px">Minimum Sale Amount cannot not be Smaller than Net amount</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Max. Sale Amount		 </span>
+                                                    <input type="text" onkeyup="minSaleAmount()" id="maxSaleAmount" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <div class="separator mb-3 mt-3">Plan Details </div>
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Interest Plan </span>
+                                                    <select id="interestPlan" class=" form-control" data-live-search="false">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3" >
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Payment Plan	<span class="red-star">*</span>	 </span>
+                                                    <select id="paymentPlan" class="form-control"  onchange="ChangePayplan(this)">
+                                                    </select>
+                                                 </div> 
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3" id="divPayPlan" style="display:none">
+                                            <div class="form-group">
+                                                <div class="mr-3 mt-4 w-100" style="display:inline-grid">
+                                                    <input type="hidden" id="hdnPayPlan" />
+                                                    <button onclick="ShowPayplan()" class="btn btn-sm btn-info">View Payment Plan</button>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Scheme </span>
+                                                    <select id="ddlScheme" class=" form-control" >
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer" id="addUnitmodalDiv">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                        <button  type="button" onclick="addUbmUnit()" class="btn btn-primary">Save</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    @section Scripts {
+        <style>
+            .fixed-width-select {
+                width: 100%;
+                max-width: 180px; /* Set your desired width here */
+            }
+
+            .select2-container {
+                width: 100% !important;
+                max-width: 180px !important; /* Ensure Select2 respects the width */
+            }
+
+            .select2-selection__rendered {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        </style>
+        <script src="~/js/unitconfigure.js"></script>
+        
+    }
+</body>

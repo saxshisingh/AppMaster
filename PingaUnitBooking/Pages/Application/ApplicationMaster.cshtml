@@ -1,0 +1,994 @@
+﻿@page
+@model PingaUnitBooking.UI.Pages.Application.ApplicationMasterModel
+@{
+
+    Layout = "~/Pages/Shared/_layout.cshtml";
+    ViewBag.unitBooking = (ViewBag.ActivePage == "ApplicationMaster") ? "active" : "active";
+}
+
+<body class="hold-transition sidebar-mini">
+    <div id="empLoader" class="loader-container">
+        <span class="loader"></span>
+    </div>
+    <div class="row" style="padding-top: 51px;">
+        <div class="col-md-12 mt-2" style="position:sticky">
+            <nav class="navbar navbar-expand-sm schemaColor datatableHeaderStyle" style="background-color: #36454F; position: sticky; top: 160px; border-radius: 10px ;width:100%;height:45px">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" style="color:white; font-family:Tahoma">Booking List -</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto " id="BookUnitButton" style="display:none">
+                    <li class="nav-item ">
+                        <button type="button" data-toggle="modal" href="" data-target="#bookUnitModal" data-backdrop="static" data-keyboard="false" class="btn btn-primary " onclick="addBookedUnitBtn()" style="float:right ">Book Unit</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
+    @* Booking Application DATATABLE*@
+
+    <section class="content mt-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <span>Search By</span>
+                                        <select id="SearchType" class=" form-control">
+                                            <option value="Select" selected>Select</option>
+                                            <option value="E-Mail">E-Mail</option>
+                                            <option value="MobileNo">Mobile No</option>
+                                            <option value="UnitNo">Unit No.</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 ">
+                                    <div class="form-group">
+                                        <input id="SearchText" class=" form-control mt-4" placeholder="Search here..">
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <button onclick="SearchBookingData()" class="btn btn-primary mt-4">Search</button>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <table id="bookingUnitListTable" class="table table-bordered table-hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">S.No.</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Unit No</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Buyer Name</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Project</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Status</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">E-Mail</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Phone</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Net Amount</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Actions</th>
+                                    </tr>
+                                </thead>
+                               
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ------------ADD Application MODEL----------------*@
+
+    <div class="modal fade" id="bookUnitModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header schemaColor" style="background-color: #36454F">
+                    <h5 id="planLabel" style="color:white;color:white">Add Unit</h5>&nbsp;&nbsp;&nbsp;
+                    <button onclick="clearTabData()" style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-tabs">
+                            <div class="card-header p-0 pt-1">
+                                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="unit-tab" data-toggle="pill" role="tab" href="#unit-tab-home" aria-controls="unit-tab-home" aria-selected="true">Unit Details</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="pd-tab" role="tab" href="#pd-tab-home" aria-controls="pd-tab-home">Payment Details</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="ad-tab" href="#ad-home" role="tab" aria-controls="ad-home" aria-selected="false">Applicant Details</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="cad-tab" href="#cad-home" role="tab" aria-controls="cad-home" aria-selected="false">Co-Applicant Details</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="du-tab" href="#du-home" role="tab" aria-controls="du-home" aria-selected="false">Document Upload</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tmc-tab" href="#tmc-home" role="tab" aria-controls="tmc-home" aria-selected="false">T&C</a>
+                                    </li>
+                                </ul>
+
+                            </div>
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-five-tabContent">
+                                    <div class="tab-pane fade show active" id="unit-tab-home" role="tabpanel" aria-labelledby="unit-tab">
+                                        <div class="tab-content" id="custom-tabs-one-tabContent">
+
+                                            @* ------------BASIC INFORMATION TAB----------------*@
+                                            <div class="row">
+                                                <span id="planID" hidden>0</span>
+                                                <div class="col-lg-6">
+                                                    <div class="form-group">
+                                                        <span>Unit Type </span><br />
+                                                        <div class="col" style="display: inline-flex;" id="unitTypeDiv">
+                                                            <div class="form-check mr-3 mt-2">
+                                                                <input onchange="applicantType(this)" value="UnitBooking" class="form-check-input" type="radio" name="flexRadioDefault" id="ubCheck" checked>
+                                                                <label class="form-check-label" for="flexRadioDefault1">
+                                                                    Unit Booking
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check ml-3 mt-2">
+                                                                <input onchange="applicantType(this)" value="eoi" class="form-check-input" type="radio" name="flexRadioDefault" id="ubeoi">
+                                                                <label class="form-check-label" for="flexRadioDefault2">
+                                                                    E.O.I
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row projectDiv">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Project Name <span class="red-star">*</span></span><br />
+                                                        <select onchange="getProjectDataforBooking('Tower')" class="form-control" id="projectID" style="width: 100%;">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Tower Name <span class="red-star">*</span></span><br />
+                                                        <select class="form-control" onchange="getProjectDataforBooking('Floor')" id="towerID" style="width: 100%;">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Floor Name <span class="red-star">*</span></span><br />
+                                                        <select class="form-control" onchange="getProjectDataforBooking('Unit')" id="floorID" style="width: 100%;">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Unit <span class="red-star">*</span></span><br />
+                                                        <select class="form-control" id="unitID" style="width: 100%;" onchange="GetUnitInfo()">
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="card-body">
+                                                    <table id="taskList" class="table table-bordered table-hover" style="width:100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="font-family: 'sans-serif'; font-weight: normal; ">Type of Unit</th>
+                                                                <th style="font-family: 'sans-serif'; font-weight: normal; ">Tower No.</th>
+                                                                <th style="font-family: 'sans-serif'; font-weight: normal; ">Tentative Unit No.</th>
+                                                                <th style="font-family: 'sans-serif'; font-weight: normal; ">Tentative Carpet Area (IN SQ.FT.)</th>
+                                                                <th style="font-family: 'sans-serif'; font-weight: normal; ">Scheme Name</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td><span id="spFlatType"></span></td>
+                                                                <td><span id="spTowerName"></span></td>
+                                                                <td><span id="spUnitNo"></span></td>
+                                                                <td><span id="spUnitCarpetArea"></span></td>
+                                                                <td><span id="spUnitScheme"></span></td>
+
+                                                            </tr>
+
+                                                            <!-- Add more rows here if needed -->
+                                                        </tbody>
+
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="row customerDiv">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Customer Mobile No <span class="red-star">*</span></span><br />
+                                                        <input type="text" id="custMobileNo" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" maxlength="10" minlength="10" class="form-control" />
+                                                        <span class="mt-1" id="custMobileNoLabel" style="color:red;font-size:10px;display:none">*Mob Number not more than 10 or less than 10*</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Customer Email <span class="red-star">*</span></span><br />
+                                                        <input type="email" class="form-control" id="custEmail" style="width: 100%;" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Remarks </span><br />
+                                                        <input type="text" class="form-control" id="eoiRemarks" style="width: 100%;" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="row RequiredDocDiv">
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Release Unit Date <span class="red-star">*</span></span><br />
+                                                        <input type="date" class="form-control" id="releaseUD" style="width: 100%;" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Application Type <span class="red-star">*</span></span><br />
+                                                        <select id="appType" class="form-control" onchange="ChangeApplicationType(this.value)">
+                                                            <option value="Select">Select</option>
+                                                            <option value="Individual">Individual</option>
+                                                            <option value="Firm">Firm</option>
+                                                            <option value="Company">Company</option>
+                                                            <option value="Local Authority">Local Authority</option>
+                                                            <option value="Association of Persons">Association of Persons</option>
+                                                            <option value="Body of Individuals">Body of Individuals</option>
+                                                            <option value="Artificial- Juridical">Artificial- Juridical</option>
+                                                            <option value="Persons/Entiry">Persons/Entiry</option>
+                                                            <option value="NRI">NRI</option>
+                                                            <option value="HUF">HUF</option>
+                                                            <option value="Trust">Trust</option>
+                                                        </select>
+                                                        <br />
+                                                        <div id="dvShowDoc" style="display:none"> 
+                                                            <button type="button" onclick="ShowDocuments()" class="btn btn-sm btn-info">View Required Documents</button>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Interest Plan</span><br />
+                                                        <input type="text" class="form-control" id="txtInterestPlan" style="width: 100%; " readonly    />
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3" id="divPayPlan" style="display:none">
+                                                    <div class="form-group">
+                                                       <br />
+                                                       <input type="hidden" id="hdnIntPayPlan" />
+                                                        <button type="button" onclick="ShowPayplan()" id="btnPayPlan" class="btn btn-sm btn-info"></button>
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span>Broker Name </span><br />
+                                                        <select id="brokerName" style="width: 100%;" class="form-control">
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                    <div class="form-group">
+                                                        <span> Broker Discount</span><br />
+                                                        <input onkeypress="return validateNumber(event)" type="text" id="brokerDiscount" pattern="[7-9]{1}[0-9]{9}" maxlength="10" minlength="10" class="form-control" placeholder="Enter Broker Discount" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer" style="justify-content:space-between">
+                                                <span class="red-star font-italic">Note : All * fields are required</span>
+                                                <div>
+                                                    <span hidden id="ubmID"></span>
+                                                    @*  <button id="pd-tab" data-toggle="pill" role="tab" href="#pd-tab-home" aria-controls="pd-tab-home" class="btn btn-success nav-link" onclick="addBookedUnit()">Proceed ></button> *@
+                                                    <button type="button" onclick="addBookedUnit()" class="btn btn-success">Proceed ></button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="ad-home" role="tabpanel" aria-labelledby="ad-tab">
+                                        <div class="row">
+
+                                            <div class="col-lg-10">
+                                                <div class="form-group" style="width:20%">
+                                                    <span>Unit No : </span>
+                                                    <span id="applicantunitno"></span>
+                                                </div>
+                                            </div>
+                                            @*         <div class="col-lg-2 d-flex justify-content-end">
+                                            <div class="form-group">
+                                            <span >Unit Date *</span><br />
+
+                                            <input disabled type="date" id="applicantUnitDate" class="form-control" style="width: 100%" />
+                                            </div>
+                                            </div> *@
+
+
+                                            <div class="col-lg-12">
+                                                <div class="form-group" style="display: flex; justify-content: center; text-underline-offset:auto">
+                                                    <span style="font-size:18PX; text-decoration:underline">PERSONAL DETAILS </span><br />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-5">
+                                                        <div class="form-group">
+                                                            <span>Buyer Name <span class="red-star">*</span></span><br />
+                                                            <input id="applicantBuyerName" class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-5">
+                                                        <div class="form-group">
+                                                            <span>S/W/D of <span class="red-star">*</span></span><br />
+                                                            <input id="applicantswd" class="form-control" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="form-group">
+                                                            <span>Date of Birth <span class="red-star">*</span></span><br />
+                                                            <input id="applicantdob" type="date" class="form-control" style="width: 100%" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-1">
+                                                        <div class="form-group">
+                                                            <span>Age <span class="red-star">*</span></span><br />
+                                                            <input type="text" id="applicantAge" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" maxlength="3" minlength="3" class="form-control" />
+                                                            <span id="applicantAgeLabel" style="color:red;font-size:10px;display:none">*Age cannot be less than 0 or more than 100*</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-2">
+                                                        <div class="form-group">
+                                                            <span>Nationality <span class="red-star">*</span></span><br />
+                                                            <select id="applicantNationality" class="form-control" style="width:100%">
+                                                                <option value="India"> India</option>
+                                                                <option value="NRI"> NRI</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <span>Occupation <span class="red-star">*</span></span><br />
+                                                            <input type="text" class="form-control" id="applicantOccupation" style="width: 100%;" />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <span>Pan <span class="red-star">*</span></span><br />
+                                                            <input type="text" class="form-control" id="applicantPan" maxlength="10" style="width: 100%;" />
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="col-lg-3">
+                                                        <div class="form-group">
+                                                            <span>Aadhaar No <span class="red-star">*</span></span><br />
+                                                            <input type="text" class="form-control" id="applicantAdharNo" maxlength="12" style="width: 100%;" />
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            @*  <div class="col-lg-3" style="float:right;">
+                                            <div class="card" style="float:right; height:150px; border-color:black; width:80%; display: flex; justify-content: center; align-items: center;">
+                                            <div  style="display: contents; align-items: center;">
+                                            <div class="row ">
+                                            <i class="fa fa-upload"  style="font-size: 20px; "></i>
+
+                                            </div>
+                                            <div class="row">
+                                            <span style="font-size:10px;">Please Upload Your Live Photo</span>
+
+                                            </div>
+
+                                            </div>
+                                            </div>
+                                            </div> *@
+
+
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <span style="font-size:13PX;">(In case of Resident Citizen only, for others , please attach copy of passport/ PIO Card)</span><br />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <div class="form-group">
+                                                    <span>Correspondence Address in India <span class="red-star">*</span></span><br />
+                                                    <textarea type="text" class="form-control" id="applicantCorrAddress" style="width: 100%;"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <span>State <span class="red-star">*</span></span><br />
+                                                    <select onchange="CityList()" class="form-control" id="applicantState" style="width: 100%;"></select>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <span>City <span class="red-star">*</span></span><br />
+                                                    <select class="form-control" id="applicantCity" style="width: 100%;"></select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <div class="form-group">
+                                                    <span>Country <span class="red-star">*</span></span><br />
+                                                    <select class="form-control" id="applicantCountry" style="width: 100%;">
+                                                        <option>Select Country</option>
+                                                        <option value="India">India</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <span>Pin <span class="red-star">*</span></span><br />
+                                                    <input type="text" id="applicantPIN" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" maxlength="7" minlength="7" class="form-control" placeholder="Enter pin" />
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <span>Email <span class="red-star">*</span></span><br />
+                                                    <input type="email" placeholder="Enter a valid email address" class="form-control" id="applicantEmail" style="width: 100%;" />
+                                                    <span id="applicantEmailLabel" style="color:red;font-size:10px;display:none">*Please Enter Valid E-mail Address*</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="form-group">
+                                                    <span>Mobile No. <span class="red-star">*</span></span><br />
+                                                    <input type="text" id="applicantMob" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" maxlength="10" minlength="10" class="form-control" placeholder="Enter phone no" />
+                                                    <span id="applicantMobLabel" style="color:red;font-size:10px;display:none">*Mob Number not more than 10 or less than 10*</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer" style="justify-content:space-between">
+                                            <span class="red-star font-italic">Note : All * fields are required</span>
+                                            <div>
+                                                <span id="applicantID" hidden></span>
+                                                <button type="button" onclick=" previousApplicantTab()" class="btn btn-primary">< Previous </button>
+                                                <button type="button" onclick="addApplicantDetails()" id="proceedButton" class="btn btn-success">Next ></button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="tab-pane fade" id="pd-tab-home" role="tabpanel" aria-labelledby="pd-tab">
+                                        <div class="tab-content" id="custom-tabs-one-tabContent">
+
+                                            @* ------------BASIC INFORMATION TAB----------------*@
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="form-group" style="display: flex; justify-content: center; text-underline-offset:auto">
+                                                        <span style="font-size:18PX; text-decoration:underline">PAYMENT DETAILS</span><br />
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12">
+                                                    <section class="content mt-2">
+                                                        <div class="container-fluid">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <div class="card">
+                                                                        <div class="card-body">
+                                                                            <div class="row">
+                                                                                <div class="col-lg-2">
+                                                                                    <div class="form-group">
+                                                                                        <span>Payment Mode <span class="red-star">*</span></span><br />
+                                                                                        <select onchange="paymodeChange()" id="payMode" class="form-control">
+                                                                                            <option selected>Select</option>
+                                                                                            <option value="Cheque">Cheque</option>
+                                                                                            <option value="NEFT">NEFT</option>
+                                                                                            <option value="RTGS">RTGS</option>
+                                                                                            <option value="Bank Transfer">Bank Transfer</option>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-lg-2">
+                                                                                    <div class="form-group">
+                                                                                        <span>Date <span class="red-star">*</span></span><br />
+                                                                                        <input type="date" class="form-control" id="paymentDate" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-lg-2" style="display:none" id="ChequeNoDiv">
+                                                                                    <div class="form-group">
+                                                                                        <span>Cheque No <span class="red-star">*</span></span><br />
+                                                                                        <input class="form-control" id="ChequeNo" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-lg-3" style="display:none" id="bankDiv">
+                                                                                    <div class="form-group">
+                                                                                        <span>Bank Name <span class="red-star">*</span></span><br />
+                                                                                        <input class="form-control" id="bankName" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-lg-3" style="display:none" id="transactionNoDiv">
+                                                                                    <div class="form-group">
+                                                                                        <span>Transaction No <span class="red-star">*</span></span><br />
+                                                                                        <input class="form-control" id="transactionNo" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-lg-2">
+                                                                                    <div class="form-group">
+                                                                                        <span>Amount <span class="red-star">*</span></span><br />
+                                                                                        <input type="text" id="paymentAmount" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" class="form-control" />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-lg-1">
+                                                                                    <div class="form-group">
+                                                                                        <button onclick="addPayment()" type="button" class="btn btn-success mt-4">Save</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                            <table id="ubmPaymentTable" class="table table-bordered table-hover" style="width:100%">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                    <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center;">Payment Mode</th>
+                                                                                    <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Payment Date</th>
+                                                                                    <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Cheque No </th>
+                                                                                    <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Bank Name </th>
+                                                                                    <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Transactions No</th>
+                                                                                    <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Amount </th>
+                                                                                    <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Actions </th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                            </table>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        
+                                                </section>
+                                                </div>
+
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" onclick="previousPaymentButton()" class="btn btn-primary">< Previous </button>
+                                                <button onclick="paymentSave()" type="button" id="proceedButton" class="btn btn-success">Next ></button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="tab-pane fade" id="cad-home" role="tabpanel" aria-labelledby="cad-tab">
+                                        <div class="tab-content" id="custom-tabs-one-tabContent">
+
+                                            @* ------------BASIC INFORMATION TAB----------------*@
+                                            <div class="row">
+
+
+                                                <div class="col-lg-12">
+                                                    <section class="content mt-2">
+                                                        <div class="container-fluid">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <div class="card">
+                                                                        <div class="card-body">
+                                                                            <button class="btn btn-success" onclick="showCoApplicantDiv()"> Add Co-Applicant</button>
+                                                                            <table id="coApplicantTable" class="table table-bordered table-hover mt-4" style="width:100%">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center;">S.No.</th>
+                                                                                        <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Co-Applicant Name</th>
+                                                                                        <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Co-Applicant Address</th>
+                                                                                        <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Actions</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                            </table>
+                                                                            <div class="row" id="coApplicantDiv" style="display:none">
+
+
+                                                                                <div class="col-lg-12 mt-2">
+                                                                                    <div class="form-group" style="display: flex; justify-content: center; text-underline-offset:auto">
+                                                                                        <span style="font-size:18PX; text-decoration:underline">CO-Applicant DETAILS </span><br />
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-lg-12">
+                                                                                    <div class="form-group">
+                                                                                        <span style="font-size:13PX;">1. SOLE OR FIRST APPLICANT</span><br />
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-lg-5">
+                                                                                            <div class="form-group">
+                                                                                                <span>Co-Applicant Name <span class="red-star">*</span></span><br />
+                                                                                                <input class="form-control" id="coApplicantName" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-5">
+                                                                                            <div class="form-group">
+                                                                                                <span>S/W/D of <span class="red-star">*</span></span><br />
+                                                                                                <input class="form-control" id="coApplicantSwd" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-2">
+                                                                                            <div class="form-group">
+                                                                                                <span>Date of Birth <span class="red-star">*</span></span><br />
+                                                                                                <input type="date" class="form-control" id="coApplicantDOB" style="width: 100%;" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-1">
+                                                                                            <div class="form-group">
+                                                                                                <span>Age <span class="red-star">*</span></span><br />
+                                                                                                <input type="text" id="coApplicantAge" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" maxlength="3" minlength="3" class="form-control" />
+                                                                                                <span id="coApplicantAgeLabel" style="color:red;font-size:10px;display:none">*Age cannot be less than 0 or more than 100*</span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-2">
+                                                                                            <div class="form-group">
+                                                                                                <span>Nationality <span class="red-star">*</span></span><br />
+                                                                                                <select class="form-control" id="coApplicantNationality" style="width: 100%;">
+                                                                                                    <option>Select</option>
+                                                                                                    <option value="Indian">Indian</option>
+                                                                                                    <option value="NRI">NRI</option>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-3">
+                                                                                            <div class="form-group">
+                                                                                                <span>Occupation <span class="red-star">*</span></span><br />
+                                                                                                <input type="text" class="form-control" id="coApplicantOccupation" style="width: 100%;" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-3">
+                                                                                            <div class="form-group">
+                                                                                                <span>Pan <span class="red-star">*</span></span><br />
+                                                                                                <input type="text" class="form-control" id="coApplicantPAN" maxlength="10" style="width: 100%;" />
+                                                                                            </div>
+                                                                                        </div>
+
+
+                                                                                        <div class="col-lg-3">
+                                                                                            <div class="form-group">
+                                                                                                <span>Aadhaar No <span class="red-star">*</span></span><br />
+                                                                                                <input type="text" class="form-control" maxlength="12" id="coApplicantAdharNo" style="width: 100%;" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="col-lg-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-lg-12">
+                                                                                            <div class="form-group">
+                                                                                                <span style="font-size:13PX;">(In case of Resident Citizen only, for others , please attach copy of passport/ PIO Card)</span><br />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-12">
+                                                                                            <div class="form-group">
+                                                                                                <span>Correspondence Address in India <span class="red-star">*</span></span><br />
+                                                                                                <textarea type="text" class="form-control" id="coApplicantAddress" style="width: 100%;"></textarea>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="col-lg-4">
+                                                                                            <div class="form-group">
+                                                                                                <span>State <span class="red-star">*</span></span><br />
+                                                                                                <select onchange="CoApplicantCityList()" class="form-control" id="coApplicantStateID" style="width: 100%;"></select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-4">
+                                                                                            <div class="form-group">
+                                                                                                <span>City <span class="red-star">*</span></span><br />
+                                                                                                <select class="form-control" id="coApplicantCityID" style="width: 100%;"></select>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-4">
+                                                                                            <div class="form-group">
+                                                                                                <span>Country <span class="red-star">*</span></span><br />
+                                                                                                <select class="form-control" id="coApplicantCountry" style="width: 100%;">
+                                                                                                    <option>Select Country</option>
+                                                                                                    <option value="India"> India</option>
+
+                                                                                                </select>
+
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-3">
+                                                                                            <div class="form-group">
+                                                                                                <span>Pin <span class="red-star">*</span></span><br />
+                                                                                                <input type="text" id="coApplicantPIN" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" maxlength="10" minlength="10" class="form-control" placeholder="Enter pin" />
+
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-3">
+                                                                                            <div class="form-group">
+                                                                                                <span>Email <span class="red-star">*</span> </span><br />
+                                                                                                <input type="email" placeholder="Enter a valid email address" class="form-control" id="coApplicantEmail" style="width: 100%;" />
+                                                                                                <span id="coApplicantEmailLabel" style="color:red;font-size:10px;display:none">*Please Enter Valid E-mail Address*</span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-lg-3">
+                                                                                            <div class="form-group">
+                                                                                                <span>Mobile No. <span class="red-star">*</span></span><br />
+                                                                                                <input type="text" id="coApplicantMobile" pattern="[7-9]{1}[0-9]{9}" onkeypress="return validateNumber(event)" maxlength="10" minlength="10" class="form-control" placeholder="Enter phone no" />
+                                                                                                <span id="coApplicantMobileLabel" style="color:red;font-size:10px;display:none">*Mob Number not more than 10 or less than 10*</span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" onclick="CoApplicantDetails()" class="btn btn-success">Save </button>
+                                                                                </div>
+                                                                            </div>
+
+
+                                                                        </div>
+
+                                                                        <div class="modal-footer" style="justify-content:space-between">
+                                                                            <span class="red-star font-italic">Note : All * fields are required</span>
+                                                                            <div>
+                                                                                <button type="button" onclick="previousCoApplicantTab()" class="btn btn-primary">< Previous </button>
+                                                                                <button onclick="ProceedApplicantDoc()" type="button" id="proceedButton" class="btn btn-success">Next > </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="du-home" role="tabpanel" aria-labelledby="du-tab">
+                                        <div class="tab-content" id="custom-tabs-one-tabContent">
+
+                                            @* ------------BASIC INFORMATION TAB----------------*@
+                                            <div class="row">
+
+
+                                                <div class="col-lg-12">
+                                                    <section class="content mt-2">
+                                                        <div class="container-fluid">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <div class="card">
+                                                                        <div class="card-body">
+                                                                            <table id="ApplicantDocTable" class="table table-bordered table-hover" style="width:100%">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center;">S.No.</th>
+                                                                                        <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Document Type</th>
+                                                                                        <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">File Url</th>
+                                                                                        <th style="font-family: 'sans-serif'; font-weight: normal; align-content: center; text-align: center; ">Actions</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                            </table>
+                                                                        </div>
+
+                                                                        <div class="modal-footer" style="justify-content:space-between">
+                                                                            <span class="red-star font-italic">Note : Documents size not more than 20 MB (All * fields are required)</span>
+                                                                            <div>
+                                                                                <button type="button" onclick="previousDocumentButton()" class="btn btn-primary">< Previous </button>
+                                                                                <button onclick="ProceeddocumentUpload()" type="button" id="proceedButton" class="btn btn-success">Next > </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="tab-pane fade" id="tmc-home" role="tabpanel" aria-labelledby="tmc-tab">
+                                        <div class="tab-content" id="custom-tabs-one-tabContent">
+
+                                            @* ------------BASIC INFORMATION TAB----------------*@
+                                            <div class="row">
+
+
+                                                <div class="col-lg-12">
+                                                    <section class="content mt-2">
+                                                        <div class="container-fluid">
+                                                            <div class="row">
+                                                                <div class="col-12">
+                                                                    <b>Terms & Condition</b>
+                                                                </div>
+                                                                <div class="col-12">
+                                                                    <p id="tncTemplate">
+                                                                    </p>
+                                                                    <div class="modal-footer" style="justify-content:space-between">
+                                                                        <div class="mr-2">
+                                                                            <input onclick="checkTncClick()" name="tnc2CheckBox" type="checkbox" id="tnc2CheckBox">
+                                                                            <label> I hereby declare that the information provided here is true, complete, and accurate to the best of my knowledge and belief.</label> <br />
+
+                                                                            <input onclick="checkTncClick()" name="tncCheckBox" type="checkbox" id="tncCheckBox">
+                                                                            <label> I have read and agreed to the <label style="font-weight:500">Terms and Conditions</label></label>
+                                                                        </div>
+                                                                        <div>
+                                                                            <button type="button" onclick="previousTNCTab()" class="btn btn-primary">< Previous </button>
+                                                                            <button onclick="clearTabData()" data-dismiss="modal" type="button" class="btn btn-primary"> Save & Close </button>
+                                                                            <button disabled data-toggle="modal" data-target="#viewAuthorizationModel" type="button" id="finalSubmitBtn" class="btn btn-success">Send For Authorization > </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        </div>
+
+    @* ------------VIEW TIMELINE MODEL----------------*@
+
+    <div class="modal fade" id="viewLogModel" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #36454F">
+                    <h5 id="planLabel" style="color:white;color:white"> Unit Booking Status</h5>&nbsp;&nbsp;&nbsp;
+                    <button style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-tabs">
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-one-tabContent">
+                                    <div class="row d-flex justify-content-center mt-70 mb-70">
+                                        <div class="col-md-12">
+                                            <div class="main-card mb-3 card">
+                                                <div class="card-body">
+                                                    <div class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column" id="timeline-container">
+                                                        <!-- Dynamic content will be appended here -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* ------------VIEW AUTHORIZATION CLIENT MODEL----------------*@
+    <div class="modal fade" id="viewAuthorizationModel" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #36454F">
+                    <h5 id="planLabel" style="color:white;color:white"> Send For Authorization</h5>&nbsp;&nbsp;&nbsp;
+                    <button style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="col-12 col-sm-12">
+                    <div class="card card-primary card-tabs">
+                        <div class="card-body">
+                            <div class="tab-content" id="custom-tabs-one-tabContent">
+                                <div class="row">
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <span>Remarks</span><br />
+                                            <textarea id="remarks" class="form-control" placeholder="Enter Remarks"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <button type="button" onclick="ChangeUbmAuthorization()" class="btn btn-success">Send</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @* ------------VIEW AUTHORIZATION SS-USERS MODEL----------------*@
+    <div class="modal fade" id="viewAuthorizationSSModel" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #36454F">
+                    <h5 id="planLabel" style="color:white;color:white"> Send For Authorization</h5>&nbsp;&nbsp;&nbsp;
+                    <button style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="col-12 col-sm-12">
+                    <div class="card card-primary card-tabs">
+                        <div class="card-body">
+                            <div class="tab-content" id="custom-tabs-one-tabContent">
+                                <div class="row">
+
+                                    <div class="col-lg-12">
+                                        <div class="form-group">
+                                            <span>Remarks</span><br />
+                                            <textarea id="ssremarks" class="form-control" placeholder="Enter Remarks"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <select id="authorizationDropdown" class=" form-control">
+                                            <option value="Approved">Approved</option>
+                                            <option value="Not Approved">Not Approved</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <button type="button" onclick="ChangeUbmStatus()" class="btn btn-success">Send</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    @section Scripts {
+        <link href="~/css/timeline.css" rel="stylesheet" />
+        <script src="~/js/bookingunit.js"></script>
+
+    }
+
+
+
+
+</body>

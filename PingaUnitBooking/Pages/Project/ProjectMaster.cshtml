@@ -1,0 +1,151 @@
+﻿@page
+@model PingaUnitBooking.UI.Pages.Project.ProjectMasterModel
+@{
+    Layout = "~/Pages/Shared/_layout.cshtml";
+    ViewBag.ProjectPermission = (ViewBag.ActivePage == "ProjectMaster") ? "active" : "active";
+}
+
+<body class="hold-transition sidebar-mini ">
+
+    <div id="empLoader" class="loader-container">
+        <span class="loader"></span>
+    </div>
+    <div class="row" style="padding-top: 51px;">
+        <div class="col-md-12 mt-2 " style="position:sticky">
+            <nav class="navbar navbar-expand-sm " style="background-color: #36454F; position: sticky; top: 160px; border-radius: 10px ;width:100%;height:45px">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" style="color:white; font-family:Tahoma">Project Configuration List -</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav h-10 w-10">
+                    <li class="nav-item">
+                        <button style="width:120px" onclick="SaveProjectPermission()" type="button"  class="btn btn-primary "><i class="fa fa-save"></i> Save</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    @* USER LIST DATATABLE*@
+
+    <section class="content mt-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                              <div class="col-lg-3">
+                                    <div class="form-group" >
+                                        <span>Select Company <em style="color:red">*</em></span>
+                                        <select style="width:100%;"  onchange="SearchData('Location')" id="companyDropdown" class="form-control" data-live-search="true">
+                                        </select>
+                                    </div>
+                                </div> 
+                                
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <span>Select Location <em style="color:red">*</em></span>
+                                        <select style="width:100%;" onchange="SearchData('Project')" id="locationDropdown"  class="form-control"data-live-search="true">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <span>Select Project <em style="color:red">*</em></span>
+                                        <select style="width:100%;" onchange="SearchData('Tower')" id="projectDropdown" class="form-control" data-live-search="true">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <span>Select Tower</span>
+                                        <select style="width:100%; max-height: 40px;" id="towerDropdown" class="form-control" multiple data-live-search="true">
+                                        </select>
+                                        <input type="checkbox" id="chkAllTower" />All Towers
+                                    </div>
+                                </div>
+                           </div>
+                                                       
+                            <table id="projectUser" class="table table-bordered table-hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; width: 50px;"></th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">S. No.</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Username</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Role</th>
+                                        <th style="font-family: 'sans-serif'; font-weight: normal; ">Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ------------VIEW Project  MODEL----------------*@
+
+    <div class="modal fade" id="addProjectmodal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content ">
+                <div class="modal-header" style="background-color: #36454F">
+                    <h5 id="planLabel" style="color:white;color:white">Project Configuration</h5>&nbsp;&nbsp;&nbsp;
+                    <button style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-tabs">
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-one-tabContent">
+
+                                    @* ------------BASIC INFORMATION TAB----------------*@
+                                    <div class="row">
+                                        
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                               <span>UserName :</span>
+                                                <span id="SelecteduserName"></span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <table id="viewProjectPermissionTable" class="table table-bordered table-hover" style="width:100%">
+                                                    <thead>
+                                                        <tr>
+
+                                                            <th style="font-family: 'sans-serif'; font-weight: normal; ">Company Name</th>
+                                                            <th style="font-family: 'sans-serif'; font-weight: normal; ">Location</th>
+                                                            <th style="font-family: 'sans-serif'; font-weight: normal; ">Project</th>
+                                                            <th style="font-family: 'sans-serif'; font-weight: normal; ">Tower</th>
+                                                            <th style="font-family: 'sans-serif'; font-weight: normal; ">Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+ @section Scripts {
+  <!-- jQuery -->
+    <script src="~/js/projectconfigure.js"></script>
+    }
+
+
+</body>

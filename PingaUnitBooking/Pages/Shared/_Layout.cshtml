@@ -1,0 +1,225 @@
+﻿
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title> Pinga - Layout </title>
+    <link href="~/css/_layout.css" rel="stylesheet" />
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/css/loader.css" rel="stylesheet" />
+   
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-details">
+            <img src="~/imgs/clientlogo.png" />
+        </div>
+        <div class="nav-container">
+        <ul class="nav-links">
+
+            @if (Context.Session.GetString("Dashboard") == "True")
+            {
+                    <li>
+                        <a href="../Dashboard/Dashboard" class="@ViewBag.DashboardActive">
+                            <i class='bx bx-grid-alt'></i>
+                            <span class="links_name">Dashboard</span>
+                        </a>
+                    </li>
+            }
+
+            @if (Context.Session.GetString("UnitBooking") == "True")
+            {
+                        <li>
+                            <a href="../Application/ApplicationMaster" class="@ViewBag.unitBooking">
+                            <i class='bx bx-coin-stack'></i>
+                            <span class="links_name">Unit Booking</span>
+                        </a>
+                        </li>
+            }
+            @if (Context.Session.GetString("BookingReallocation") == "True")
+            {
+                <li>
+                    <a href="../Project/Reallocation" class="@ViewBag.BookingReallocation">
+                            <i class='bx bx-building-house'></i>
+                        <span class="links_name"> Booking Reallocation </span>
+                    </a>
+                </li>
+            }
+
+
+            @if (Context.Session.GetString("RolePermission") == "True")
+            {
+                        <li>
+                            <a href="../Auth/UserMaster" class="@ViewBag.rolePermission">
+                            <i class='bx bx-user'></i>
+                            <span class="links_name">Role Permission</span>
+                        </a>
+                    </li>
+            }
+            @if (Context.Session.GetString("ProjectPermission") == "True")
+            {
+                        <li>
+                            <a href="../Project/ProjectMaster" class="@ViewBag.ProjectPermission">
+                            <i class="bx bx-coin-stack"></i>
+                            <span class="links_name">Project Permission</span>
+                        </a>
+                    </li>
+            }
+            @if (Context.Session.GetString("UnitDetail") == "True")
+            {
+                        <li>
+                            <a href="../Project/UnitMaster" class="@ViewBag.UnitDetails">
+                            <i class='bx bx-box'></i>
+                            <span class="links_name">Unit Details</span>
+                        </a>
+                    </li>
+            }
+            @if (Context.Session.GetString("Documents") == "True")
+            {
+                <li >
+                    <a href="#" onclick="toggleSubmenu(event, 'documentsSubmenu')">
+                            <i class='bx bx-brightness'></i>
+                        <span class="links_name"> Settings </span>
+                        <i class='bx bxs-chevron-down' style="margin-left:auto"></i>
+                    </a>
+                    <ul class="sub-menu" id="documentsSubmenu">
+                        <li>
+                            <a href="../ApplicationDoc/ApplicationDoc" class="@ViewBag.ApplicationDoc">
+                                <i class='bx bxs-file-doc'></i>
+                                <span class="links_name"> Documents </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../Scheme/Scheme" class="@ViewBag.Scheme">
+                                    <i class='bx bxs-offer'></i>
+                                <span class="links_name"> Scheme </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../Configuration/Configure" class="@ViewBag.MailConfigure">
+                                <i class='bx bx-brightness'></i>
+                                <span class="links_name"> Configuration </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="../Configuration/TemplateConfiguration" class="@ViewBag.Template">
+                                <i class='bx bx-task'></i>
+                                <span class="links_name">Template</span>
+                            </a>
+                        </li>
+                        <li style="height:60px">
+                        </li>
+                    </ul>
+                </li>
+            }
+          
+            <li class="log_out">
+                <a onclick="logOut()">
+                    <i class='bx bx-log-out'></i>
+                    <span class="links_name">Log out</span>
+                </a>
+            </li>
+        </ul>
+        </div>
+    
+    </div>
+    <section class="home-section">
+        <nav>
+            <div class="sidebar-button">
+                <i class='bx bx-menu sidebarBtn'></i>
+            </div>
+            @*     <div class="search-box">
+            <input type="text" placeholder="Search...">
+            <i class='bx bx-search'></i>
+            </div> *@
+            <div class="profile-details">
+                <img src="~/imgs/userbg.png" alt="" />
+                @{
+                    var sessionValue = Context.Session.GetString("username");
+                    var roleName = Context.Session.GetString("roleName");
+                }
+                @* <span class="admin_name">@Context.Request.Cookies["UserName"]</span> *@
+                <span class="admin_name">@sessionValue (@roleName)</span>
+            </div>
+        </nav>
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </section>
+    <script>
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarBtn = document.querySelector(".sidebarBtn");
+        sidebarBtn.onclick = function () {
+            sidebar.classList.toggle("active");
+            if (sidebar.classList.contains("active")) {
+                sidebarBtn.classList.replace("bx-menu", "bx-menu-alt-right");
+            } else
+                sidebarBtn.classList.replace("bx-menu-alt-right", "bx-menu");
+        }
+    </script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <!-- Core Script for SweetAlert plugin JavaScript-->
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="~/js/Comman.js"></script>
+
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+
+
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    @*
+    <!-- Bootstrap JS Bundle (includes Popper.js) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+
+   *@
+    <script>
+        function toggleSubmenu(event, submenuId) {
+            event.preventDefault();
+            var submenu = document.getElementById(submenuId);
+            if (submenu.style.display === "block") {
+                submenu.style.display = "none";
+            } else {
+                submenu.style.display = "block";
+            }
+        }
+    </script>
+
+    <!-- Custom Scripts -->
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

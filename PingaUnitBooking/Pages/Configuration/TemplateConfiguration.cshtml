@@ -1,0 +1,217 @@
+﻿@page
+@model PingaUnitBooking.UI.Pages.Configuration.TemplateConfigurationModel
+@{
+    Layout = "~/Pages/Shared/_layout.cshtml";
+    ViewBag.Template = (ViewBag.ActivePage == "TemplateConfiguration") ? "active" : "active";
+}
+<link rel="stylesheet" href="~/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+<div id="empLoader" class="loader-container">
+    <span class="loader"></span>
+</div>
+<body class="hold-transition sidebar-mini ">
+    <div class="row" style="padding-top: 51px;">
+        <div class="col-md-12 mt-2 " style="position:sticky">
+            <nav class="navbar navbar-expand-sm " style="background-color: #36454F; position: sticky; top: 160px; border-radius: 10px ;width:100%;height:45px">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" style="color:white; font-family:Tahoma">Template Configuration List -</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ml-auto"> 
+                    <li class="nav-item">
+                        <button type="button" data-toggle="modal" href="" data-backdrop="static" data-keyboard="false" data-target="#addTemplate" onclick="BindDropdown()" class="btn btn-primary " style="float:right ">Add Template</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    @* USER LIST DATATABLE*@
+
+    <section class="content mt-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body" id="divTempList">
+                            @*Table bind here*@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @* ------------ADD Project  MODEL----------------*@
+
+    <div class="modal fade" id="addTemplate" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #36454F">
+                    <h5 id="planLabel" style="color:white;color:white">Add Template</h5>
+                    <button style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-tabs">
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-one-tabContent">
+                                    <hidden id="hdnTemplateId" value="0"></hidden>
+                                    @* ------------BASIC INFORMATION TAB----------------*@
+                                    <div class="row">
+                                        <span id="empID" hidden>0</span>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Process Type<em style="color:red">*</em></span>
+                                                    <select class="form-control" id="ddlProcessType" onchange="changeProcessType(this.value)">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Select Project<em style="color:red">*</em></span>
+                                                    <select class="form-control" id="ddlProject">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3" id="divTemplateType">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Template Type</span>
+                                                    <select class="form-control" id="ddlTemplateType" onchange="changeTemplateType(this.value)">
+                                                        <option value="Select">Select</option>
+                                                        <option value="SMS">SMS</option>
+                                                        <option value="Email">Email</option>
+                                                        <option value="WhatsApp">WhatsApp</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3" id="divVendorTemplateId">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Vendor Template Id</span>
+                                                   <input type="text" id="txtVendorTemplateId" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-8 mt-4">
+                                            <div class="form-group">
+                                                <div class="mr-6 w-100" style="display:inline-grid">
+                                                    <textarea id="txteditor"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4" id="divEmbededField">
+                                            <div class="form-group">
+                                                <div class="mr-3 w-100" style="display:inline-grid">
+                                                    <span>Choose Embeded Field</span>
+                                                    <select style="height:150px" id="ddlEmbnamelist" multiple="multiple" onchange="chooseEmbeded(this)">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" onclick="SaveTemplate()" id="empBtn"   class="btn btn-primary">Save</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- /.card -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="modal fade" id="vTemplate" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #36454F">
+                    <h5 id="planLabel" style="color:white;color:white">Template</h5>
+                    <button style="color:white" type="button" class="close" data-dismiss="modal" tabindex="-1" aria-label="Close">
+                        <i class="fa fa-close"></i>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12">
+                        <div class="card card-primary card-tabs">
+                            <div class="card-body">
+                                <div class="tab-content" id="custom-tabs-one-tabContent">
+                                    <div id="dvTemp">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @section Scripts {
+        <script src="https://cdn.ckeditor.com/ckeditor5/12.0.0/classic/ckeditor.js"></script>
+        <script src="~/js/template.js"></script>
+        <script>
+            ClassicEditor.defaultConfig = {
+                toolbar: {
+                    items: [
+                        'heading',
+                        '|',
+                        'bold',
+                        'italic',
+                        '|',
+                        'bulletedList',
+                        'numberedList',
+                        '|',
+                        'insertTable',
+                        '|',
+                        
+                        'undo',
+                        'redo'
+                    ]
+                },
+                image: {
+                    toolbar: [
+                        'imageStyle:full',
+                        'imageStyle:side',
+                        '|',
+                        'imageTextAlternative'
+                    ]
+                },
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                },
+                language: 'en'
+            };
+            var Editor;
+            ClassicEditor
+                .create(document.querySelector('#txteditor')) 
+                .then(editor => {
+                   
+                    // editor.data.set(data.data[0]['documentName']);
+                    Editor = editor;
+
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        </script>
+
+    }
+</body>

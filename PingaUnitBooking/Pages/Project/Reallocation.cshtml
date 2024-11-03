@@ -1,0 +1,103 @@
+﻿@page
+@model PingaUnitBooking.UI.Pages.Project.ReallocationModel
+@{
+    Layout = "~/Pages/Shared/_layout.cshtml";
+    ViewBag.BookingReallocation = (ViewBag.ActivePage == "BookingReallocation") ? "active" : "active";
+}
+
+<body class="hold-transition sidebar-mini ">
+
+    <div id="Loader" class="loader-container">
+        <span class="loader"></span>
+    </div>
+    <div class="row" style="padding-top: 51px;">
+        <div class="col-md-12 mt-2 " style="position:sticky">
+            <nav class="navbar navbar-expand-sm " style="background-color: #36454F; position: sticky; top: 160px; border-radius: 10px ;width:100%;height:45px">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" style="color:white; font-family:Tahoma">Booking Reallocation -</a>
+                    </li>
+                </ul>
+              
+            </nav>
+        </div>
+    </div>
+
+    @* USER LIST DATATABLE*@
+
+    <section class="content mt-2">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                              <div class="col-lg-3">
+                                    <div class="form-group" >
+                                        <span>Select Role <em style="color:red">*</em></span>
+                                        <select style="width:100%;" onchange="GetUserByRoleName(this.value)" id="ddlRole" class="form-control" data-live-search="true">
+                                            <option value="Select" selected>Select</option>
+                                            <option value="Sales Manager">Sales Manager</option>
+                                            <option value="CRM">CRM</option>
+                                            <option value="Account">Account</option>
+                                            <option value="Admin/CFO">Admin/CFO</option>
+                                        </select>
+                                    </div>
+                                </div> 
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <span>Select User <em style="color:red">*</em></span>
+                                        <select style="width:100%;"   id="ddlUser"  class="form-control"data-live-search="true">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <span>Unit No</span>
+                                        <input type="text" id="txtUnitNo" class="form-control " style="height:30px" placeholder="Enter unit no">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <br />
+                                        <button  onclick="SearchUnit()" type="button" class="btn btn-sm btn-info"><i class="fa fa-filter"></i>&nbsp;Search</button>
+                                    </div>
+                                </div>
+                           </div>
+                           <div class="row">
+                               <div class="table table-responsive" id="divUnitReallocation">
+                                   
+                               </div>
+                           </div>
+                            <div class="row" id="divNewUser" style="display:none">
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <span>Select New User <em style="color:red">*</em></span>
+                                        <select style="width:100%;" id="ddlNewUser" class="form-control" data-live-search="true">
+                                        </select>
+                                    </div>
+                                </div>
+                              
+                                <div class="col-lg-3">
+                                    <div class="form-group">
+                                        <br />
+                                        <button onclick="ReallocateUnit()" type="button" class="btn btn-sm btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+ @section Scripts {
+  <!-- jQuery -->
+    <script src="~/js/BookingReallocation.js"></script>
+    }
+
+
+</body>
